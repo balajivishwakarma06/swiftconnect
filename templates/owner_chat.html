@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Owner Chat</title>
+</head>
+<body>
+
+<h2>Owner Chat ({{ user_id }})</h2>
+
+<!-- SEND MESSAGE -->
+<form method="POST">
+    <input type="text" name="message" placeholder="Reply message"><br><br>
+    <button type="submit">Send</button>
+</form>
+
+<hr>
+
+<h3>Messages:</h3>
+
+<ul>
+{% for msg in messages %}
+    
+    {% if msg[0] == user_id %}
+        <!-- OWNER MESSAGE -->
+        <li><b>You:</b> {{ msg[2] }}</li>
+    {% else %}
+        <!-- VISITOR MESSAGE -->
+        <li><b>Visitor:</b> {{ msg[2] }}</li>
+    {% endif %}
+
+{% endfor %}
+</ul>
+
+</body>
+</html>
