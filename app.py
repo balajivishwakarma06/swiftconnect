@@ -40,7 +40,7 @@ def register():
 
         user_id = "USR" + str(random.randint(1000, 9999))
 
-        qr_img = qrcode.make(f"https://lavera-scrutable-adeline.ngrok-free.dev/message/{user_id}")
+        qr_img = qrcode.make(f"https://swiftconnect-yb63.onrender.com/message/{user_id}")
         file_path = f"static/qr_codes/{user_id}.png"
         qr_img.save(file_path)
 
