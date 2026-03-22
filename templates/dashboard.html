@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="navbar">
+    🚗 SwiftConnect Dashboard
+</div>
+
+<div class="container">
+
+    <h2>Registration Successful ✅</h2>
+
+    <p>Your User ID: <b>{{ user_id }}</b></p>
+
+    <p>Your QR Code:</p>
+
+    <img src="{{ qr }}" width="200">
+
+    <br><br>
+
+    <!-- Visitor Chat -->
+    <a href="/message/{{ user_id }}">
+        <button>Open Visitor Chat</button>
+    </a>
+
+    <br><br>
+
+    <!-- Owner Chat -->
+    <a href="/owner/{{ user_id }}">
+        <button>👉 Open Owner Chat</button>
+    </a>
+
+</div>
+
+</body>
+</html>
