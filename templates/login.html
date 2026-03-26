@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign in - SwiftConnect</title>
+
+    <!-- GOOGLE FONT -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="login-body">
+
+<div class="login-card">
+
+    <!-- BRAND -->
+    <h1 class="brand">SWIFT CONNECT</h1>
+
+    <!-- GOOGLE LOGO -->
+    <div class="google-logo">
+        <span style="color:#4285F4">G</span>
+        <span style="color:#DB4437">o</span>
+        <span style="color:#F4B400">o</span>
+        <span style="color:#4285F4">g</span>
+        <span style="color:#0F9D58">l</span>
+        <span style="color:#DB4437">e</span>
+    </div>
+
+    <!-- HEADINGS -->
+    <h2 class="title">Sign in</h2>
+    <p class="subtitle">to continue to SwiftConnect</p>
+
+    <!-- FORM -->
+    <form method="POST">
+
+        <input type="email" name="email" placeholder="Email or phone" required>
+
+        <!-- LINKS -->
+        <div class="links">
+            <a href="#">Forgot email?</a>
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="actions">
+            <a href="#" class="create">Create account</a>
+            <button type="submit">Next</button>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>
