@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="main">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <h3>Chats</h3>
+
+        {% for u in users %}
+            <a href="/owner/{{ user_id }}/{{ u[0] }}">
+                <div class="user">
+                    {{ u[0] }}
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <!-- RIGHT EMPTY -->
+    <div class="chat-area">
+        <h2>Select a chat</h2>
+    </div>
+
+</div>
+
+</body>
+</html>
