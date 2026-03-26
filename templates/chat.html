@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="chat-wrapper">
+
+    <div class="chat-header">
+        🚗 SwiftConnect Chat
+    </div>
+
+    <div class="chat-box" id="chat-box"></div>
+
+    <!-- Typing Indicator -->
+    <div id="typing" style="display:none; font-size:12px; color:gray; padding:5px;">
+        Typing...
+    </div>
+
+    <form method="POST" class="chat-input">
+        <!-- ❗ FIXED: sender should be Visitor -->
+        <input type="hidden" name="sender" value="Visitor">
+
+        <input type="text" id="messageInput" name="message" placeholder="Type a message..." required>
+        <button type="submit">➤</button>
+    </form>
+
+</div>
+
+<!-- Typing Indicator -->
+<script>
+const input = document.getElementById("messageInput");
+const typingIndicator = document.getElementById("typing");
+
+let typingTimeout;
+
+input.addEventListener("input", () => {
+    typingIndicator.style.display = "block";
+
+    clearTimeout(typingTimeout);
+
+    typingTimeout = setTimeout(() => {
+        typingIndicator.style.display = "none";
+    }, 1000);
+});
+</script>
+
+<!-- 🔥 AUTO CHAT UPDATE (FINAL FIXED VERSION) -->
+<script>
+function loadMessages() {
+    fetch("/get_messages/{{ user_id }}/{{ request.cookies.get('visitor_id') }}")
+        .then(res => res.json())
+        .then(data => {
+            const chatBox = document.getElementById("chat-box");
+
+            // ❗ DO NOT clear input, only update chat
+            chatBox.innerHTML = "";
+
+            data.messages.forEach(msg => {
+                const div = document.createElement("div");
+
+                if (msg[0] === "Visitor") {
+                    div.className = "msg right";
+                } else {
+                    div.className = "msg left";
+                }
+
+                if (msg[0] === "Visitor") {
+    div.innerText = "You: " + msg[2];
+} else {
+    div.innerText = "Owner: " + msg[2];
+}
+                chatBox.appendChild(div);
+            });
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+}
+
+// load every 2 seconds
+setInterval(loadMessages, 2000);
+
+// first load
+loadMessages();
+</script>
+
+</body>
+</html>
