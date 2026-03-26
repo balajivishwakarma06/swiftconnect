@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="navbar">🚗 Register</div>
+
+<div class="container">
+    <form method="POST">
+        <input type="text" name="name" placeholder="Your Name"><br><br>
+        <input type="text" name="vehicle" placeholder="Vehicle Number"><br><br>
+        <button type="submit">Generate QR</button>
+    </form>
+</div>
+
+</body>
+</html>

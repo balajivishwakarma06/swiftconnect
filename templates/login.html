@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign in - Swift Connect</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+body {
+    margin: 0;
+    background: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-card {
+    width: 360px;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 40px 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo img {
+    width: 75px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: 400;
+    color: #202124;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 14px;
+    color: #5f6368;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+input:focus {
+    border: 2px solid #1a73e8;
+    outline: none;
+}
+
+.link {
+    margin-top: 10px;
+}
+
+.link a {
+    color: #1a73e8;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.link a:hover {
+    text-decoration: underline;
+}
+
+.info {
+    font-size: 12px;
+    color: #5f6368;
+    margin-top: 16px;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+}
+
+.create a {
+    color: #1a73e8;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+button {
+    background: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 24px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1765cc;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="login-card">
+
+    <div class="logo">
+        <img src="https://www.gstatic.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png">
+    </div>
+
+    <h1 class="title">Sign in</h1>
+    <p class="subtitle">to continue to Swift Connect</p>
+
+    <form method="POST">
+
+        <!-- ✅ FIXED INPUT -->
+        <input type="email" name="email" placeholder="Email or phone" required>
+
+        <div class="link">
+            <a href="#">Forgot email?</a>
+        </div>
+
+        <p class="info">
+            Not your computer? Use Guest mode to sign in privately.
+        </p>
+
+        <div class="actions">
+            <div class="create">
+                <a href="#">Create account</a>
+            </div>
+            <button type="submit">Next</button>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>
