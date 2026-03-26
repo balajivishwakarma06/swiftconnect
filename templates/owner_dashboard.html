@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SwiftConnect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="wa-container">
+
+    <!-- SIDEBAR -->
+    <div class="wa-sidebar">
+
+        <div class="wa-header">
+            🚗 SwiftConnect
+        </div>
+
+        {% for u in users %}
+        <a href="/owner/{{ user_id }}/{{ u[0] }}" class="chat-link">
+            <div class="chat-item">
+                <div class="avatar">👤</div>
+                <div class="chat-info">
+                    <div class="name">{{ u[0] }}</div>
+                    <div class="last-msg">{{ u[1] }}</div>
+                </div>
+            </div>
+        </a>
+        {% else %}
+        <p style="padding:20px;">No chats yet</p>
+        {% endfor %}
+
+    </div>
+
+    <!-- EMPTY CHAT -->
+    <div class="wa-chat">
+        <div class="empty">
+            Select a chat to start messaging
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
