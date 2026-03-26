@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SwiftConnect Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="login-bg">
+
+<!-- BIG BACKGROUND TEXT -->
+<h1 class="bg-text">SWIFT CONNECT</h1>
+
+<!-- LOGIN CARD -->
+<div class="google-card">
+
+    <h2 class="google-logo">
+    <span style="color:#4285F4">G</span>
+    <span style="color:#DB4437">o</span>
+    <span style="color:#F4B400">o</span>
+    <span style="color:#4285F4">g</span>
+    <span style="color:#0F9D58">l</span>
+    <span style="color:#DB4437">e</span>
+</h2>
+    <h3>Sign in</h3>
+    <p class="sub-text">to continue to Gmail</p>
+
+    <form method="POST">
+        <input type="email" name="email" placeholder="Email or phone" required>
+
+        <p class="link">Forgot email?</p>
+
+        <div class="actions">
+            <span class="create">Create account</span>
+            <button type="submit">Next</button>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>
