@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}History - SwiftConnect{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <div class="hero-tag">Activity Log</div>
+    <h1 class="hero-title">History</h1>
+    <p class="hero-copy">Track your recent QR generation activity in the SwiftConnect cockpit. Every event is logged for secure, premium vehicle management.</p>
+</section>
+
+<section class="history-panel">
+    <div class="history-header">
+        <div>
+            <div class="history-title">No history yet</div>
+            <div class="history-note">Your QR generation history will appear here once you create your first identity code.</div>
+        </div>
+    </div>
+    <div class="history-list">
+        <article class="history-item">
+            <div class="history-meta"><span>Waiting for data</span><span>Activity feed</span></div>
+            <div class="history-title-strong">Start by creating a QR code</div>
+            <div class="history-subtitle">Your recent QR entries will appear in this premium activity panel once generated.</div>
+        </article>
+    </div>
+</section>
+{% endblock %}

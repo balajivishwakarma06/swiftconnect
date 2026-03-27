@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}My Vehicles - SwiftConnect{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <div class="hero-tag">Vehicle Fleet</div>
+    <h1 class="hero-title">Connected Vehicles</h1>
+    <p class="hero-copy">Review all vehicles linked to your SwiftConnect account. Each vehicle profile is stored securely and ready for QR generation whenever you need fast, contactless access.</p>
+</section>
+
+<section class="panel">
+    <div class="history-header">
+        <div>
+            <div class="history-title">No vehicles registered yet</div>
+            <div class="history-note">Generate a QR identity from the Dashboard to add your first vehicle.</div>
+        </div>
+    </div>
+    <div class="card-grid">
+        <article class="stat-card gold">
+            <div class="stat-top"><span>Vehicle count</span><span class="stat-icon"><i class="fas fa-car-side"></i></span></div>
+            <div class="stat-value">0</div>
+            <div class="stat-label">No connected vehicles yet</div>
+        </article>
+        <article class="stat-card blue">
+            <div class="stat-top"><span>Ready to link</span><span class="stat-icon"><i class="fas fa-link"></i></span></div>
+            <div class="stat-value">Create one</div>
+            <div class="stat-label">Use the generate page to add new vehicles</div>
+        </article>
+        <article class="stat-card purple">
+            <div class="stat-top"><span>Quick access</span><span class="stat-icon"><i class="fas fa-bolt"></i></span></div>
+            <div class="stat-value">Instant</div>
+            <div class="stat-label">Your vehicle dashboard is ready</div>
+        </article>
+    </div>
+</section>
+{% endblock %}

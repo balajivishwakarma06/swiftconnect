@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftConnect - Smart Vehicle Contact System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo-text">🚗 SwiftConnect</div>
+            <div class="nav-links">
+                <a href="#" class="nav-item">Home</a>
+                <a href="#features" class="nav-item">Features</a>
+                <a href="#about" class="nav-item">About</a>
+                <a href="{{ url_for('login') }}" class="nav-item btn-nav">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">Smart Vehicle Contact System</h1>
+                <p class="hero-subtitle">
+                    Secure communication between vehicle owners using QR technology.
+                    Connect instantly, protect your privacy, stay safe.
+                </p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('login') }}" class="btn btn-primary">Get Started</a>
+                    <a href="#features" class="btn btn-secondary">Learn More</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="feature-box">📱<br>QR Code<br>Integration</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose SwiftConnect?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🚗</div>
+                    <h3>Instant Contact</h3>
+                    <p>Contact vehicle owner instantly using QR codes. No need to search for contact information.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Privacy Protected</h3>
+                    <p>Your personal information is secured. Communication is encrypted and completely safe.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚨</div>
+                    <h3>Emergency Alerts</h3>
+                    <p>Send and receive emergency alerts instantly. Get immediate attention when you need it.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📍</div>
+                    <h3>Parking Notifications</h3>
+                    <p>Receive notifications about your vehicle. Never miss an update about your car's location.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <h3>Ratings & Reviews</h3>
+                    <p>Build trust with other vehicle owners through verified ratings and reviews.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Accessible Anywhere</h3>
+                    <p>Access SwiftConnect from any device. Manage your vehicle contacts on the go.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-it-works" id="about">
+        <div class="container">
+            <h2 class="section-title">How It Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Create Account</h3>
+                    <p>Sign up with your vehicle details</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Generate QR Code</h3>
+                    <p>Get your unique vehicle QR code</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Share & Connect</h3>
+                    <p>Share your code with other drivers</p>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Communicate</h3>
+                    <p>Securely message vehicle owners</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Connect with Other Drivers?</h2>
+            <p>Join thousands of vehicle owners using SwiftConnect today</p>
+            <a href="{{ url_for('login') }}" class="btn btn-primary btn-large">Start Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 SwiftConnect. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
