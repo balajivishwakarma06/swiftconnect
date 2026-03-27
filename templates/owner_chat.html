@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+
+        <div class="sidebar-header">
+            Chats
+        </div>
+
+        {% for u in users %}
+        <a href="/owner/{{ user_id }}/{{ u[0] }}">
+            <div class="chat-item">
+                <img src="https://i.pravatar.cc/40" class="avatar">
+                <div>
+                    <div class="name">{{ u[0] }}</div>
+                    <div class="preview">Click to open chat</div>
+                </div>
+            </div>
+        </a>
+        {% endfor %}
+
+    </div>
+
+    <!-- RIGHT CHAT -->
+    <div class="chat">
+
+        <div class="chat-header">
+            <img src="https://i.pravatar.cc/40">
+            <div>
+                <b>{{ visitor_id }}</b><br>
+                <span>online</span>
+            </div>
+        </div>
+
+        <div class="chat-body" id="chat-box"></div>
+
+        <form method="POST" class="chat-input">
+            <input type="text" name="message" placeholder="Type a message">
+            <button>➤</button>
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+function loadMessages() {
+    fetch("/get_messages/{{ user_id }}/{{ visitor_id }}")
+    .then(res => res.json())
+    .then(data => {
+        const chatBox = document.getElementById("chat-box");
+        chatBox.innerHTML = "";
+
+        data.messages.forEach(msg => {
+            const div = document.createElement("div");
+
+            if (msg[0] === "{{ user_id }}") {
+                div.className = "msg sent";
+            } else {
+                div.className = "msg received";
+            }
+
+            div.innerText = msg[2];
+            chatBox.appendChild(div);
+        });
+    });
+}
+setInterval(loadMessages,1000);
+loadMessages();
+</script>
+
+</body>
+</html>

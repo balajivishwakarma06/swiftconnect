@@ -1,0 +1,353 @@
+/* ==========================================
+   SWIFT CONNECT - 2026 MODERN DESIGN SYSTEM
+   ========================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+/* ==========================================
+   RESET & BASE STYLES
+   ========================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ==========================================
+   VIBRANT MESH GRADIENT BACKGROUND
+   ========================================== */
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(
+        135deg,
+        #4158D0 0%,
+        #C850C0 50%,
+        #FFCC70 100%
+    );
+    background-size: 400% 400%;
+    animation: meshGradient 8s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+@keyframes meshGradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* ==========================================
+   GLASSMORPHISM CARD CONTAINER
+   ========================================== */
+
+.glass-card {
+    width: 100%;
+    max-width: 450px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 24px;
+    padding: 50px 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2),
+                0 0 100px rgba(0, 0, 0, 0.1);
+    animation: slideIn 0.6s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==========================================
+   BRANDING & TYPOGRAPHY
+   ========================================== */
+
+.brand-container {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.brand-header {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4158D0, #C850C0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.brand-logo {
+    font-size: 18px;
+    font-weight: 600;
+    color: #202124;
+    letter-spacing: 2px;
+}
+
+.page-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #202124;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.page-subtitle {
+    font-size: 14px;
+    color: #9CA3AF;
+    text-align: center;
+    margin-bottom: 30px;
+    line-height: 1.5;
+}
+
+/* ==========================================
+   FORM ELEMENTS
+   ========================================== */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #202124;
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    color: #202124;
+}
+
+.form-input::placeholder {
+    color: #BDBDBD;
+}
+
+.form-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.95);
+    border-color: transparent;
+    box-shadow: 0 0 20px rgba(0, 219, 222, 0.5),
+                inset 0 0 10px rgba(0, 219, 222, 0.1);
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+.btn-primary {
+    width: 100%;
+    padding: 14px 20px;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #00DBDE 0%, #FC00FF 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(0, 219, 222, 0.3);
+    letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 219, 222, 0.5),
+                0 0 30px rgba(252, 0, 255, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* ==========================================
+   LINKS & INTERACTIVE ELEMENTS
+   ========================================== */
+
+.link {
+    color: #4158D0;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.link:hover {
+    color: #00DBDE;
+    text-shadow: 0 0 10px rgba(0, 219, 222, 0.6);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-muted {
+    color: #9CA3AF;
+    font-size: 13px;
+}
+
+.link-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    margin-bottom: 20px;
+}
+
+/* ==========================================
+   OTP SPECIFIC STYLES
+   ========================================== */
+
+.otp-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 30px 0;
+}
+
+.otp-input {
+    width: 50px;
+    height: 60px;
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.otp-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.95);
+    border-color: transparent;
+    box-shadow: 0 0 20px rgba(0, 219, 222, 0.5),
+                inset 0 0 10px rgba(0, 219, 222, 0.1);
+}
+
+/* ==========================================
+   REGISTRATION SPECIFIC STYLES
+   ========================================== */
+
+.vehicle-id-badge {
+    background: linear-gradient(135deg, #4158D0 0%, #C850C0 100%);
+    color: #ffffff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    margin: 20px 0;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(65, 88, 208, 0.3);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.form-row .form-group {
+    margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .glass-card {
+        padding: 35px 25px;
+    }
+    
+    .brand-header {
+        font-size: 24px;
+    }
+    
+    .page-title {
+        font-size: 22px;
+    }
+    
+    .otp-input {
+        width: 45px;
+        height: 55px;
+        font-size: 20px;
+    }
+}
+
+/* ==========================================
+   UTILITY CLASSES
+   ========================================== */
+
+.error-text {
+    color: #EF4444;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.success-text {
+    color: #10B981;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}

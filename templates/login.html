@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Swift Connect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="glass-card">
+        <!-- Brand Container -->
+        <div class="brand-container">
+            <div class="brand-header">SWIFT CONNECT</div>
+            <div class="brand-logo">🚗</div>
+        </div>
+
+        <!-- Page Title -->
+        <h1 class="page-title">Sign In</h1>
+        <p class="page-subtitle">Welcome back! Enter your email to continue</p>
+
+        <!-- Login Form -->
+        <form id="loginForm" method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    placeholder="your.email@example.com"
+                    required
+                />
+            </div>
+
+            <div class="link-group">
+                <label></label>
+                <a href="{{ url_for('forgot_password') }}" class="link">Forgot email?</a>
+            </div>
+
+            <button type="submit" class="btn-primary">Next</button>
+        </form>
+
+        <!-- Sign Up Link -->
+        <p class="text-center text-muted" style="margin-top: 24px;">
+            Don't have an account?
+            <a href="{{ url_for('register') }}" class="link">Create account</a>
+        </p>
+    </div>
+</body>
+</html>
