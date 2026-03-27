@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Swift Connect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="glass-card">
+        <!-- Brand Container -->
+        <div class="brand-container">
+            <div class="brand-header">SWIFT CONNECT</div>
+            <div class="brand-logo">🚗</div>
+        </div>
+
+        <!-- Page Title -->
+        <h1 class="page-title">Register Vehicle</h1>
+        <p class="page-subtitle">Complete your profile and generate your unique QR code</p>
+
+        <!-- Registration Form -->
+        <form id="registrationForm" method="POST" action="{{ url_for('register') }}">
+            <!-- User Name -->
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    class="form-input"
+                    placeholder="John Doe"
+                    required
+                />
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-group">
+                <label for="contact">Email or Phone Number</label>
+                <input
+                    type="text"
+                    id="contact"
+                    name="contact"
+                    class="form-input"
+                    placeholder="your.email@example.com or +1234567890"
+                    required
+                />
+            </div>
+
+            <!-- Vehicle Number -->
+            <div class="form-group">
+                <label for="vehicle">Vehicle Plate Number</label>
+                <input
+                    type="text"
+                    id="vehicle"
+                    name="vehicle"
+                    class="form-input"
+                    placeholder="ABC 1234 XYZ"
+                    required
+                />
+            </div>
+
+            <!-- Emergency Contact -->
+            <div class="form-group">
+                <label for="emergency">Emergency Contact</label>
+                <input
+                    type="text"
+                    id="emergency"
+                    name="emergency"
+                    class="form-input"
+                    placeholder="+1234567890"
+                    required
+                />
+            </div>
+
+            <!-- Vehicle ID Badge -->
+            <div class="vehicle-id-badge" id="vehicleIdBadge">
+                ID: <span id="vehicleId">veh_auto_generated</span>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-primary">Generate QR Code</button>
+        </form>
+
+        <!-- Sign In Link -->
+        <p class="text-center text-muted" style="margin-top: 24px;">
+            Already registered?
+            <a href="{{ url_for('login') }}" class="link">Sign in here</a>
+        </p>
+    </div>
+
+    <script>
+        // Auto-generate Vehicle ID based on vehicle plate
+        const vehicleInput = document.getElementById('vehicle');
+        const vehicleIdSpan = document.getElementById('vehicleId');
+
+        vehicleInput.addEventListener('input', (e) => {
+            const plate = e.target.value.toUpperCase().replace(/\s+/g, '');
+            if (plate.length > 0) {
+                const randomSuffix = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+                vehicleIdSpan.textContent = `veh_${plate.slice(0, 3).toLowerCase()}_${randomSuffix}`;
+            } else {
+                vehicleIdSpan.textContent = 'veh_auto_generated';
+            }
+        });
+
+        // Initialize with a default ID
+        const defaultRandomSuffix = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+        vehicleIdSpan.textContent = `veh_${defaultRandomSuffix}`;
+    </script>
+</body>
+</html>
