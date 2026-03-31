@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Vehicle Owner — SwiftConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-color">
+    <div class="visitor-landing">
+        <div class="landing-card shadow-lg">
+            <div class="landing-header">
+                <div class="btn-icon" style="margin: 0 auto 16px auto; width: 64px; height: 64px;"><i data-lucide="shield-alert" style="width: 32px; height: 32px;"></i></div>
+                <h1>Contact Owner</h1>
+                <p>Secure anonymous connection to {{ vehicle_label }}</p>
+            </div>
+            
+            <form method="POST" action="{{ url_for('visitor_chat_start', vehicle_token=vehicle_token) }}">
+                <div class="mb-4 text-center">
+                    <div class="card-subtitle mb-8">Please select why you need to contact the owner:</div>
+                </div>
+                
+                <div class="reason-options">
+                    <label class="reason-option">
+                        <input type="radio" name="purpose" value="Parking Issue" required>
+                        <span><i data-lucide="parking-circle" style="vertical-align: middle; margin-right: 8px; stroke-width: 1.5"></i> Parking Issue</span>
+                    </label>
+                    <label class="reason-option">
+                        <input type="radio" name="purpose" value="Accident Report">
+                        <span><i data-lucide="car-crash" style="vertical-align: middle; margin-right: 8px; stroke-width: 1.5"></i> Accident Report</span>
+                    </label>
+                    <label class="reason-option">
+                        <input type="radio" name="purpose" value="Emergency">
+                        <span><i data-lucide="alert-triangle" style="vertical-align: middle; margin-right: 8px; stroke-width: 1.5"></i> Emergency</span>
+                    </label>
+                    <label class="reason-option">
+                        <input type="radio" name="purpose" value="Theft / Suspicious Activity">
+                        <span><i data-lucide="siren" style="vertical-align: middle; margin-right: 8px; stroke-width: 1.5"></i> Theft / Suspicious Activity</span>
+                    </label>
+                    <label class="reason-option">
+                        <input type="radio" name="purpose" value="Other">
+                        <span><i data-lucide="message-square" style="vertical-align: middle; margin-right: 8px; stroke-width: 1.5"></i> Other Reason</span>
+                    </label>
+                </div>
+                
+                <div class="flex justify-between gap-4 mt-8">
+                    <a href="/" class="btn btn-secondary flex-1" style="flex: 1"><i data-lucide="home"></i> Home</a>
+                    <button type="submit" class="btn btn-primary flex-1" style="flex: 1"><i data-lucide="message-circle"></i> Open Chat</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

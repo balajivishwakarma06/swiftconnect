@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - SwiftConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        body {
+            background-color: var(--sidebar-bg);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatData"
+        data-chat-token="{{ chat_token }}"
+        data-session-id="{{ visitor_session_id or '' }}"
+        data-visitor-name="{{ visitor_name | default('Visitor') }}"
+        data-owner-mode="{{ 'true' if owner_mode else 'false' }}"
+        data-user-email="{{ 'Vehicle Owner' if owner_mode else visitor_name | default('Visitor') }}"
+        style="display:none"></div>
+
+    <div class="chat-container w-full" style="height: 95vh; margin: 24px;">
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="flex items-center gap-4">
+                <a href="{{ url_for('owner_chats') if owner_mode else '/' }}" class="btn-icon-secondary" style="width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                    <i data-lucide="arrow-left" style="width: 18px;"></i>
+                </a>
+                <div class="chat-title-info">
+                    <div class="chat-title">{{ vehicle_label }}</div>
+                    <div class="chat-subtitle">
+                        {% if visitor_purpose %}
+                            <span style="display:inline-flex; align-items:center; gap:4px;"><span class="status-dot status-active"></span> {{ visitor_purpose }}</span>
+                        {% else %}
+                            <span style="display:inline-flex; align-items:center; gap:4px;"><span class="status-dot status-active"></span> Connected</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 items-center">
+                {% if owner_mode %}
+                    {% if visitor_session_id %}
+                    <form method="POST" action="{{ url_for('clear_chat_thread', vehicle_token=chat_token, visitor_session_id=visitor_session_id) }}" style="display:inline;" onsubmit="return confirm('Clear this conversation?');">
+                        <button type="submit" class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;"><i data-lucide="trash-2" style="width: 16px;"></i> Clear Chat</button>
+                    </form>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('block_chat', vehicle_token=chat_token) }}" style="display:inline;" onsubmit="return confirm('Block this visitor?');">
+                        <button type="submit" class="btn btn-secondary" style="color: #EF4444; border-color: #EF4444; padding: 6px 12px; font-size: 0.85rem;"><i data-lucide="shield-off" style="width: 16px;"></i> Block</button>
+                    </form>
+                {% endif %}
+            </div>
+        </header>
+
+        {% if error %}
+            <div class="flex items-center justify-center flex-1" style="flex-direction: column;">
+                <i data-lucide="alert-circle" style="width: 48px; height: 48px; color: #EF4444; margin-bottom: 16px;"></i>
+                <h2 style="margin-bottom: 8px;">Chat Unavailable</h2>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">{{ error }}</p>
+                <a href="/" class="btn btn-primary">Return Home</a>
+            </div>
+        {% else %}
+            <!-- Messages -->
+            <div class="chat-messages" id="messageList">
+                {% if messages %}
+                    {% for msg in messages %}
+                        {% set is_mine = (owner_mode and msg.sender_type == 'owner') or (not owner_mode and msg.sender_type == 'visitor') %}
+                        <div class="message-wrapper py-2 {{ 'message-mine' if is_mine else 'message-theirs' }}">
+                            <div class="message-label">{{ 'You' if is_mine else msg.sender_name }} &bull; {{ msg.timestamp or '' }}</div>
+                            {% if msg.message %}
+                                <div class="message-bubble">{{ msg.message }}</div>
+                            {% endif %}
+                            {% if msg.image_path %}
+                                <img src="{{ url_for('static', filename=msg.image_path) }}" alt="Shared image" class="message-img" onclick="openModal(this.src)">
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="flex items-center justify-center h-full w-full" style="color: var(--text-muted); font-size: 0.95rem;">
+                        <div class="text-center">
+                            <i data-lucide="message-square" style="width: 48px; height: 48px; margin: 0 auto 16px auto; opacity: 0.5;"></i>
+                            <p>No messages yet.<br>Send a message to start the conversation.</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Input Area -->
+            <footer class="chat-input-area">
+                <button id="cameraButton" class="btn-icon-secondary" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; background: transparent;"><i data-lucide="paperclip"></i></button>
+                <input id="chatInput" type="text" class="chat-input" placeholder="Type a message..." autocomplete="off">
+                <button id="sendButton" class="btn-icon"><i data-lucide="send" style="width: 20px; height: 20px;"></i></button>
+            </footer>
+            <input type="file" id="cameraInput" accept="image/png, image/jpeg" style="display:none">
+        {% endif %}
+    </div>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal" onclick="closeModal()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg">
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // Image Modal logic
+        function openModal(src) {
+            document.getElementById('imageModal').classList.add('active');
+            document.getElementById('modalImg').src = src;
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+
+        const socket = io({ transports: ['websocket'] });
+        const chatData = document.getElementById('chatData');
+        const chatToken = chatData?.dataset.chatToken || '';
+        const visitorSessionId = chatData?.dataset.sessionId || '';
+        const visitorName = chatData?.dataset.visitorName || 'Visitor';
+        const ownerMode = chatData?.dataset.ownerMode === 'true';
+        const senderType = ownerMode ? 'owner' : 'visitor';
+        const senderName = ownerMode ? (chatData?.dataset.userEmail || 'Owner') : visitorName;
+
+        function formatTime(timestamp) {
+            if (!timestamp) return '';
+            const parts = timestamp.split(' ');
+            if (parts.length > 1) {
+                return parts[1].substring(0, 5);
+            }
+            return timestamp;
+        }
+
+        function scrollToBottom() {
+            const list = document.getElementById('messageList');
+            if (list) {
+                list.scrollTop = list.scrollHeight;
+            }
+        }
+
+        socket.on('connect', () => {
+            if (chatToken) {
+                socket.emit('join_room', { vehicle_token: chatToken, visitor_session_id: visitorSessionId });
+            }
+        });
+
+        socket.on('receive_message', (data) => {
+            const list = document.getElementById('messageList');
+            if (!list) return;
+
+            // Remove the empty state message if it exists
+            const emptyState = list.querySelector('.flex.items-center.justify-center.h-full');
+            if (emptyState) {
+                emptyState.remove();
+            }
+
+            const isMine = (ownerMode && data.sender_type === 'owner') || (!ownerMode && data.sender_type === 'visitor');
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-wrapper py-2 ' + (isMine ? 'message-mine' : 'message-theirs');
+
+            const label = document.createElement('div');
+            label.className = 'message-label';
+            label.innerHTML = (isMine ? 'You' : data.sender_name) + ' &bull; ' + formatTime(data.timestamp);
+            wrapper.appendChild(label);
+
+            if (data.message) {
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                bubble.textContent = data.message;
+                wrapper.appendChild(bubble);
+            }
+
+            if (data.image_path) {
+                const img = document.createElement('img');
+                img.src = '/static/' + data.image_path;
+                img.className = 'message-img';
+                img.onclick = () => openModal(img.src);
+                wrapper.appendChild(img);
+            }
+
+            list.appendChild(wrapper);
+            scrollToBottom();
+        });
+
+        const sendButton = document.getElementById('sendButton');
+        const chatInput = document.getElementById('chatInput');
+        const cameraButton = document.getElementById('cameraButton');
+        const cameraInput = document.getElementById('cameraInput');
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            
+            socket.emit('send_message', {
+                vehicle_token: chatToken,
+                visitor_session_id: visitorSessionId,
+                sender_type: senderType,
+                sender_name: senderName,
+                message: text,
+                image_data: null
+            });
+            chatInput.value = '';
+        }
+
+        sendButton?.addEventListener('click', sendMessage);
+        chatInput?.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function uploadImageFile(file) {
+            const form = new FormData();
+            form.append('vehicle_token', chatToken);
+            form.append('visitor_session_id', visitorSessionId || '');
+            form.append('sender_type', senderType);
+            form.append('sender_name', senderName);
+            form.append('image_file', file);
+
+            fetch("{{ url_for('upload_image') }}", {
+                method: 'POST',
+                body: form
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (!result.success) {
+                    alert(result.error || 'Image upload failed.');
+                }
+                // Only handle error here. On success, the backend should do socketio.emit('receive_message', payload, room=room_name)
+                // Wait, does the backend emit? Yes, I checked earlier.
+            })
+            .catch(err => console.error('Upload error:', err));
+        }
+
+        cameraButton?.addEventListener('click', () => {
+            cameraInput?.click();
+        });
+
+        cameraInput?.addEventListener('change', event => {
+            const file = event.target.files[0];
+            if (!file) return;
+            uploadImageFile(file);
+            cameraInput.value = '';
+        });
+
+        // Initial scroll
+        scrollToBottom();
+    </script>
+</body>
+</html>
