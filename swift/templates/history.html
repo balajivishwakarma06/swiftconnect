@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}History - SwiftConnect{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <div class="hero-tag">History Log</div>
+    <h1 class="hero-title">Saved QR Entries</h1>
+    <p class="hero-copy">Every generated QR code and its chat activity are stored securely. Open a record to review visitor interactions, downloads, and print-ready views.</p>
+</section>
+
+<section class="history-panel">
+    <div class="history-header">
+        <div>
+            <div class="history-title">QR Code Archive</div>
+            <div class="history-note">All recorded vehicle QR entries are persisted in your account.</div>
+        </div>
+    </div>
+    <div class="history-list">
+        {% if qrs %}
+            <div class="card-grid">
+                {% for qr in qrs %}
+                    <article class="history-item">
+                        <div class="history-meta"><span>{{ qr.created_at }}</span><span>{{ qr.vehicle }}</span></div>
+                        <div class="history-title-strong">{{ qr.name }}</div>
+                        <div class="history-subtitle">{{ qr.message or 'No owner note provided.' }}</div>
+                        <div class="history-subtitle">{{ qr.chat_count }} saved messages • {{ 'Blocked' if qr.is_blocked else 'Active' }}</div>
+                        <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+                            <a href="{{ url_for('static', filename=qr.qr_image_path) }}" target="_blank" class="btn btn-secondary"><i class="fas fa-eye"></i> View QR</a>
+                            <a href="{{ url_for('static', filename=qr.qr_image_path) }}" download class="btn btn-secondary"><i class="fas fa-download"></i> Download</a>
+                            <a href="{{ url_for('print_qr', qr_id=qr.id) }}" target="_blank" class="btn btn-secondary"><i class="fas fa-print"></i> Print</a>
+                            <a href="{{ url_for('history_detail', qr_id=qr.id) }}" class="btn btn-primary"><i class="fas fa-comments"></i> View History</a>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <article class="history-item">
+                <div class="history-title-strong">Generate your first Smart QR</div>
+                <div class="history-subtitle">No saved QR entries are available yet. Create a new code to see its history here.</div>
+            </article>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
