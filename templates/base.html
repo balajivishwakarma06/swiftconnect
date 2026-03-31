@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SwiftConnect{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="dashboard-shell">
+        <div class="topbar">
+            <div class="logo">SwiftConnect</div>
+            <div class="user-actions">
+                {% if user_email %}
+                    <div class="user-chip">{{ user_email }}</div>
+                    <a href="{{ url_for('logout') }}" class="btn-logout"><i data-lucide="log-out"></i> Logout</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn-logout"><i data-lucide="log-in"></i> Login</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            {% if user_email %}
+            <aside class="sidebar">
+                <nav class="sidebar-menu">
+                    <a href="{{ url_for('dashboard') }}" class="menu-item {% if active_page == 'dashboard' %}active{% endif %}">
+                        <i data-lucide="layout-dashboard"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('generate') }}" class="menu-item {% if active_page == 'generate' %}active{% endif %}">
+                        <i data-lucide="qr-code"></i> Generate QR
+                    </a>
+                    <a href="{{ url_for('vehicles') }}" class="menu-item {% if active_page == 'vehicles' %}active{% endif %}">
+                        <i data-lucide="car-front"></i> My Vehicles
+                    </a>
+                    <a href="{{ url_for('owner_chats') }}" class="menu-item {% if active_page == 'owner_chats' %}active{% endif %}">
+                        <i data-lucide="messages-square"></i> Active Chats
+                    </a>
+                    <a href="{{ url_for('history') }}" class="menu-item {% if active_page == 'history' %}active{% endif %}">
+                        <i data-lucide="history"></i> History
+                    </a>
+                </nav>
+            </aside>
+            {% endif %}
+
+            <main class="dashboard-main">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category if category != 'error' else 'error' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+                
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
