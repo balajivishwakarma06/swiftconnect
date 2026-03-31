@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print QR — SwiftConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { min-height:100vh; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f4f5f8; color:#111827; display:flex; align-items:center; justify-content:center; padding:24px; }
+        .print-shell { width:100%; max-width:720px; background:#fff; border-radius:28px; box-shadow:0 30px 90px rgba(15,23,42,0.14); padding:32px; }
+        .print-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+        .print-title { font-size:1.6rem; font-weight:700; }
+        .btn { display:inline-flex; align-items:center; gap:10px; padding:12px 18px; border-radius:999px; background:#111827; color:#fff; text-decoration:none; border:none; cursor:pointer; }
+        .print-body { display:grid; gap:24px; }
+        .qr-card { padding:24px; border:1px solid #e5e7eb; border-radius:24px; text-align:center; }
+        .qr-card img { width:100%; max-width:320px; height:auto; margin:0 auto; }
+        .qr-meta { display:grid; gap:10px; margin-top:18px; text-align:left; }
+        .qr-meta span { display:block; color:#374151; font-size:0.95rem; }
+        .qr-meta strong { color:#111827; }
+        @media print {
+            body { padding:0; background:none; }
+            .btn { display:none; }
+            .print-shell { box-shadow:none; border:none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="print-shell">
+        <div class="print-header">
+            <div>
+                <div class="print-title">SwiftConnect QR Print</div>
+                <div style="color:#6b7280; margin-top:6px;">Secure contact label for vehicle owner.</div>
+            </div>
+            <button class="btn" onclick="window.print()"><i class="fas fa-print"></i> Print</button>
+        </div>
+        <div class="print-body">
+            <div class="qr-card">
+                <img src="{{ url_for('static', filename=qr.qr_image_path) }}" alt="QR code">
+                <p style="margin-top:18px; color:#4b5563;">Scan to contact the vehicle owner for parking issues, accident reporting, or emergency alerts.</p>
+            </div>
+            <div class="qr-meta">
+                <span><strong>Owner:</strong> {{ qr.name }}</span>
+                <span><strong>Vehicle:</strong> {{ qr.vehicle }}</span>
+                <span><strong>Created:</strong> {{ qr.created_at }}</span>
+                <span><strong>Access token:</strong> {{ qr.chat_token }}</span>
+            </div>
+        </div>
+    </div>
+<script>
+    window.onload = function() {
+        if (window.matchMedia) {
+            setTimeout(() => window.print(), 600);
+        }
+    };
+</script>
