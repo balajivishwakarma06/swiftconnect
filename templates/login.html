@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SwiftConnect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+</head>
+<body class="bg">
+
+    <div class="card google-card">
+
+    <h2 class="google-title">Sign in</h2>
+    <p class="google-subtitle">to continue to SwiftConnect</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert {% if category == 'error' %}alert-error{% elif category == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/login">
+        <input type="email" name="email" placeholder="Email" required class="input-field">
+        <input type="password" name="password" placeholder="Password" required class="input-field">
+
+        <button type="submit" class="btn-primary">Sign in</button>
+    </form>
+
+    <div class="divider">OR</div>
+
+    <button class="google-btn" type="button" disabled style="opacity: 0.6; cursor: not-allowed;">
+        <i class="fab fa-google" style="color: #1f2937;"></i>
+        Sign in with Google (Coming Soon)
+    </button>
+
+    <p class="signup-text">
+        New user? <a href="{{ url_for('auth') }}">Create account</a>
+    </p>
+
+    <p class="back-home">
+        <a href="{{ url_for('home') }}" class="back-link">← Back to Home</a>
+    </p>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SwiftConnect Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { min-height: 100vh; background: radial-gradient(circle at top, #080a14 0%, #090d19 40%, #020205 100%); color: #eef2ff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .chat-shell { max-width: 1000px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column; padding: 24px; opacity: 0; transform: translateY(10px); animation: pageFadeIn 0.65s ease forwards; }
+        .chat-header { display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 22px 28px; background: rgba(15, 20, 40, 0.96); border: 1px solid rgba(255,255,255,0.08); border-radius: 28px; box-shadow: 0 30px 80px rgba(0,0,0,0.35); margin-bottom: 18px; }
+        .chat-header h1 { font-size: clamp(1.8rem, 3vw, 2.4rem); letter-spacing: 0.1em; color: #fff7d5; }
+        .chat-header .chat-meta { color: #9da6c8; font-size: 0.95rem; }
+        .chat-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 22px; border-radius: 999px; border: 1px solid transparent; font-size: 0.94rem; font-weight: 700; cursor: pointer; text-decoration: none; }
+        .btn-primary { background: linear-gradient(135deg, #68d391 0%, #38b2ac 100%); color: #071014; }
+        .btn-secondary { background: rgba(255,255,255,0.08); color: #eef2ff; border-color: rgba(255,255,255,0.14); }
+        .btn-secondary:hover, .btn-primary:hover { transform: translateY(-1px); }
+        .btn.loading { cursor: wait; opacity: 0.85; }
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            right: 18px;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.85);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spinner 0.75s linear infinite;
+        }
+        .btn { position: relative; }
+        @keyframes spinner { to { transform: rotate(360deg); } }
+        .conversation { flex: 1; overflow: hidden; border-radius: 32px; background: rgba(12, 18, 34, 0.96); border: 1px solid rgba(255,255,255,0.08); box-shadow: 0 40px 90px rgba(0,0,0,0.35); display: flex; flex-direction: column; }
+        .message-list { flex: 1; overflow-y: auto; padding: 28px; display: flex; flex-direction: column; gap: 18px; }
+        .message-row { display: flex; flex-direction: column; gap: 8px; max-width: 78%; animation: fadeIn 0.32s ease forwards; }
+        .message-row.owner { align-self: flex-end; }
+        .message-row.visitor { align-self: flex-start; }
+        .message-bubble { padding: 18px 22px; background: rgba(58, 95, 190, 0.14); border: 1px solid rgba(66, 140, 255, 0.16); border-radius: 28px; position: relative; backdrop-filter: blur(14px); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .message-row:hover .message-bubble { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(0,0,0,0.16); }
+        .message-row.owner .message-bubble { background: linear-gradient(180deg, rgba(104,211,145,0.22), rgba(56,178,172,0.16)); border-color: rgba(104,211,145,0.4); }
+        .message-row.visitor .message-bubble { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); }
+        .message-bubble p { color: #eef2ff; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+        .message-row.owner .message-bubble:before, .message-row.visitor .message-bubble:before { content: ''; position: absolute; width: 12px; height: 12px; background: inherit; bottom: 16px; border-radius: 50%; }
+        .message-row.owner .message-bubble:before { right: -6px; }
+        .message-row.visitor .message-bubble:before { left: -6px; }
+        .message-bubble img { width: 100%; max-width: 360px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 15px 40px rgba(0,0,0,0.25); transition: transform 0.3s ease; }
+        .message-bubble img:hover { transform: scale(1.02); }
+        .message-meta { color: #9da6c8; font-size: 0.82rem; }
+        .message-block { display: flex; flex-direction: column; gap: 10px; }
+        .chat-footer { display: flex; gap: 12px; align-items: center; padding: 18px 24px; background: rgba(16, 22, 42, 0.96); border-top: 1px solid rgba(255,255,255,0.12); backdrop-filter: blur(16px); }
+        .input-wrapper { flex: 1; position: relative; }
+        .chat-input { width: 100%; padding: 16px 22px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.08); color: #eef2ff; outline: none; font-size: 1rem; }
+        .chat-input:focus { box-shadow: 0 0 0 4px rgba(104,211,145,0.12); border-color: rgba(104,211,145,0.45); }
+        .chat-input::placeholder { color: rgba(238, 242, 255, 0.56); }
+        .icon-button { width: 52px; height: 52px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); color: #eef2ff; display: grid; place-items: center; cursor: pointer; }
+        .icon-button:hover { background: rgba(255,255,255,0.12); }
+        .chat-empty { color: #a8b0cc; text-align: center; padding: 40px 20px; }
+        .chat-status { margin-top: 10px; display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); border-radius: 999px; color: #b8c6ff; font-size: 0.86rem; letter-spacing: 0.04em; }
+        .error-shell { min-height: 60vh; display: grid; place-items: center; text-align: center; padding: 40px; color: #f8d7da; }
+        .error-shell h2 { font-size: 2rem; margin-bottom: 16px; }
+        .error-shell p { color: #d8c1c8; margin-bottom: 24px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pageFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 900px) { .chat-header, .chat-footer { flex-direction: column; align-items: stretch; } .message-row { max-width: 100%; } .chat-actions { justify-content: flex-start; } }
+        @media (max-width: 640px) { .chat-header { padding: 18px 20px; } .chat-footer { padding: 16px 18px; } .icon-button { width: 48px; height: 48px; } }
+    </style>
+</head>
+<body>
+    <div class="chat-shell">
+        <div id="chatData"
+            data-chat-token="{{ chat_token }}"
+            data-session-id="{{ visitor_session_id or '' }}"
+            data-visitor-name="{{ visitor_name | default('Visitor') }}"
+            data-owner-mode="{{ 'true' if owner_mode else 'false' }}"
+            data-user-email="{{ 'Vehicle Owner' if owner_mode else visitor_name | default('Visitor') }}"
+            style="display:none"></div>
+        <header class="chat-header">
+            <div>
+                <h1>SwiftConnect Chat</h1>
+                <div class="chat-meta">{{ vehicle_label }}</div>
+                {% if visitor_purpose %}
+                    <div class="chat-status">Purpose: {{ visitor_purpose }}</div>
+                {% else %}
+                    <div class="chat-status">{{ 'Owner View' if owner_mode else 'Visitor Access' }}</div>
+                {% endif %}
+            </div>
+            <div class="chat-actions">
+                {% if owner_mode %}
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Dashboard</a>
+                    <a href="{{ url_for('owner_chats') }}" class="btn btn-secondary"><i class="fas fa-comments"></i> Active Chats</a>
+                    {% if visitor_session_id %}
+                    <form method="POST" action="{{ url_for('clear_chat_thread', vehicle_token=chat_token, visitor_session_id=visitor_session_id) }}" style="display:inline;" onsubmit="return confirm('Clear this visitor thread? This removes only this visitor conversation.');">
+                        <button type="submit" class="btn btn-secondary"><i class="fas fa-trash-alt"></i> Clear Thread</button>
+                    </form>
+                    {% endif %}
+                    <form method="POST" action="{{ url_for('block_chat', vehicle_token=chat_token) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-ban"></i> Block Visitors</button>
+                    </form>
+                {% else %}
+                    <a href="{{ url_for('home') }}" class="btn btn-secondary"><i class="fas fa-home"></i> Home</a>
+                {% endif %}
+            </div>
+        </header>
+
+        {% if error %}
+            <div class="error-shell">
+                <h2>Chat unavailable</h2>
+                <p>{{ error }}</p>
+                <a href="{{ url_for('home') }}" class="btn btn-primary">Return Home</a>
+            </div>
+        {% else %}
+            <main class="conversation">
+                <div class="message-list" id="messageList">
+                    {% if messages %}
+                        {% for msg in messages %}
+                            <div class="message-row {{ 'owner' if msg.sender_type == 'owner' else 'visitor' }}">
+                                <div class="message-block">
+                                    {% if msg.message %}
+                                        <div class="message-bubble"><p>{{ msg.message }}</p></div>
+                                    {% endif %}
+                                    {% if msg.image_path %}
+                                        <div class="message-bubble"><img src="{{ url_for('static', filename=msg.image_path) }}" alt="Uploaded image"></div>
+                                    {% endif %}
+                                </div>
+                                <div class="message-meta">{{ msg.sender_name }} • {{ msg.timestamp }}</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="chat-empty">Start a conversation with the vehicle owner. Type a message or capture a proof photo to begin.</div>
+                    {% endif %}
+                </div>
+            </main>
+
+            <footer class="chat-footer">
+                <button id="cameraButton" class="icon-button" title="Capture image" {% if owner_mode %}style="visibility:hidden;"{% endif %}><i class="fas fa-camera"></i></button>
+                <div class="input-wrapper"><input id="chatInput" class="chat-input" type="text" placeholder="Type your message..." autocomplete="off"></div>
+                <button id="sendButton" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send</button>
+            </footer>
+            <input type="file" id="cameraInput" accept="image/png, image/jpeg" capture="environment" style="display:none">
+        {% endif %}
+    </div>
+
+    <script>
+        const socket = io({ transports: ['websocket'] });
+        const chatData = document.getElementById('chatData');
+        const chatToken = chatData?.dataset.chatToken || '';
+        const visitorSessionId = chatData?.dataset.sessionId || '';
+        const visitorName = chatData?.dataset.visitorName || 'Visitor';
+        const ownerMode = chatData?.dataset.ownerMode === 'true';
+        const senderType = ownerMode ? 'owner' : 'visitor';
+        const senderName = ownerMode ? (chatData?.dataset.userEmail || 'Owner') : visitorName;
+
+        function createMessageRow(data) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'message-row ' + (data.sender_type === 'owner' ? 'owner' : 'visitor');
+
+            const block = document.createElement('div');
+            block.className = 'message-block';
+
+            if (data.message) {
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                const text = document.createElement('p');
+                text.textContent = data.message;
+                bubble.appendChild(text);
+                block.appendChild(bubble);
+            }
+
+            if (data.image_path) {
+                const bubble = document.createElement('div');
+                bubble.className = 'message-bubble';
+                const image = document.createElement('img');
+                image.src = '/static/' + data.image_path;
+                image.alt = 'Proof image';
+                bubble.appendChild(image);
+                block.appendChild(bubble);
+            }
+
+            if (block.children.length) wrapper.appendChild(block);
+            const meta = document.createElement('div');
+            meta.className = 'message-meta';
+            meta.textContent = `${data.sender_name} • ${data.timestamp}`;
+            wrapper.appendChild(meta);
+            return wrapper;
+        }
+
+        function scrollToBottom() {
+            const list = document.getElementById('messageList');
+            if (list) {
+                requestAnimationFrame(() => {
+                    list.scrollTop = list.scrollHeight;
+                });
+            }
+        }
+
+        socket.on('connect', () => {
+            if (chatToken) {
+                socket.emit('join_room', { vehicle_token: chatToken, visitor_session_id: visitorSessionId });
+            }
+        });
+
+        socket.on('connect_error', err => {
+            console.warn('Socket.IO connect error:', err);
+        });
+
+        socket.on('disconnect', reason => {
+            console.warn('Socket.IO disconnected:', reason);
+        });
+
+        socket.on('receive_message', data => {
+            const list = document.getElementById('messageList');
+            if (!list) return;
+            const row = createMessageRow(data);
+            list.appendChild(row);
+            scrollToBottom();
+        });
+
+        const sendButton = document.getElementById('sendButton');
+        const chatInput = document.getElementById('chatInput');
+        const cameraButton = document.getElementById('cameraButton');
+        const cameraInput = document.getElementById('cameraInput');
+
+        function setButtonLoading(button, active) {
+            if (!button) return;
+            if (active) {
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            setButtonLoading(sendButton, true);
+            socket.emit('send_message', {
+                vehicle_token: chatToken,
+                visitor_session_id: visitorSessionId,
+                sender_type: senderType,
+                sender_name: senderName,
+                message: text,
+                image_data: null
+            });
+            chatInput.value = '';
+            setTimeout(() => setButtonLoading(sendButton, false), 400);
+        }
+
+        sendButton?.addEventListener('click', sendMessage);
+        chatInput?.addEventListener('keydown', event => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function uploadImageFile(file) {
+            setButtonLoading(cameraButton, true);
+            const form = new FormData();
+            form.append('vehicle_token', chatToken);
+            form.append('visitor_session_id', visitorSessionId);
+            form.append('sender_type', senderType);
+            form.append('sender_name', senderName);
+            form.append('image_file', file);
+
+            fetch("{{ url_for('upload_image') }}", {
+                method: 'POST',
+                body: form
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (!result.success) {
+                    console.warn(result.error || 'Image upload failed.');
+                    return;
+                }
+                const list = document.getElementById('messageList');
+                if (!list) return;
+                const row = createMessageRow(result.payload);
+                list.appendChild(row);
+                scrollToBottom();
+            })
+            .catch(err => console.error('Upload error:', err))
+            .finally(() => {
+                setButtonLoading(cameraButton, false);
+            });
+        }
+
+        cameraButton?.addEventListener('click', () => {
+            cameraInput?.click();
+        });
+
+        cameraInput?.addEventListener('change', event => {
+            const file = event.target.files[0];
+            if (!file) return;
+            uploadImageFile(file);
+            cameraInput.value = '';
+        });
+
+        scrollToBottom();
+    </script>
+</body>
+</html>

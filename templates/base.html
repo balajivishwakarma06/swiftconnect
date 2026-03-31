@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}SwiftConnect{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+</head>
+<body>
+    <div class="dashboard-shell">
+        <div class="topbar">
+            <div class="logo">SWIFT CONNECT</div>
+            <div class="user-actions">
+                <div class="user-chip">{{ user_email }}</div>
+                <button id="themeToggle" class="btn-logout theme-toggle" type="button"><i class="fas fa-moon"></i> Theme</button>
+                <a href="{{ url_for('logout') }}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <aside class="sidebar">
+                <div class="sidebar-brand">SWIFT CONNECT</div>
+                <nav class="sidebar-menu">
+                    <a href="{{ url_for('dashboard') }}" class="menu-item gold {% if active_page == 'dashboard' %}active{% endif %}"><span class="icon"><i class="fas fa-tachometer-alt"></i></span>Dashboard</a>
+                    <a href="{{ url_for('generate') }}" class="menu-item blue {% if active_page == 'generate' %}active{% endif %}"><span class="icon"><i class="fas fa-qrcode"></i></span>Generate QR</a>
+                    <a href="{{ url_for('vehicles') }}" class="menu-item cyan {% if active_page == 'vehicles' %}active{% endif %}"><span class="icon"><i class="fas fa-car-side"></i></span>My Vehicles</a>
+                    <a href="{{ url_for('owner_chats') }}" class="menu-item gold {% if active_page == 'owner_chats' %}active{% endif %}"><span class="icon"><i class="fas fa-comments"></i></span>Active Chats</a>
+                    <a href="{{ url_for('history') }}" class="menu-item purple {% if active_page == 'history' %}active{% endif %}"><span class="icon"><i class="fas fa-clock"></i></span>History</a>
+                    <a href="{{ url_for('logout') }}" class="menu-item"><span class="icon"><i class="fas fa-power-off"></i></span>Logout</a>
+                </nav>
+            </aside>
+
+            <main class="dashboard-main">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+        const storedTheme = localStorage.getItem('swiftTheme');
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const initialTheme = storedTheme || (prefersDark ? 'dark' : 'light');
+
+        function setTheme(theme) {
+            const root = document.documentElement;
+            if (theme === 'dark') {
+                root.classList.add('dark-mode');
+                root.classList.remove('light-mode');
+                if (themeToggle) {
+                    themeToggle.classList.add('active');
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i> Light';
+                }
+            } else {
+                root.classList.remove('dark-mode');
+                root.classList.add('light-mode');
+                if (themeToggle) {
+                    themeToggle.classList.remove('active');
+                    themeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark';
+                }
+            }
+            localStorage.setItem('swiftTheme', theme);
+        }
+
+        if (initialTheme) {
+            setTheme(initialTheme);
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                const nextTheme = document.documentElement.classList.contains('dark-mode') ? 'light' : 'dark';
+                setTheme(nextTheme);
+            });
+        }
+    </script>
+</body>
+</html>

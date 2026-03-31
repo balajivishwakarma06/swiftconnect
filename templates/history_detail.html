@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}History Detail - SwiftConnect{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <div class="hero-tag">History Detail</div>
+    <h1 class="hero-title">QR Record Overview</h1>
+    <p class="hero-copy">Review the selected QR entry with all saved chat history, visitor reasons, and content uploads.</p>
+</section>
+
+<section class="history-panel">
+    <div class="history-header">
+        <div>
+            <div class="history-title">{{ qr.vehicle }} — {{ qr.name }}</div>
+            <div class="history-note">Generated on {{ qr.created_at }}</div>
+        </div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+            <a href="{{ url_for('print_qr', qr_id=qr.id) }}" class="btn btn-secondary"><i class="fas fa-print"></i> Print QR</a>
+            <a href="{{ url_for('history') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to History</a>
+            <form method="POST" action="{{ url_for('delete_chat', qr_id=qr.id) }}" style="display:inline;">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-trash-alt"></i> Delete Chat</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card-grid">
+        <article class="history-item">
+            <div class="history-meta"><span>Owner name</span><span>{{ qr.name }}</span></div>
+            <div class="history-title-strong">Vehicle ID</div>
+            <div class="history-subtitle">{{ qr.vehicle }}</div>
+            <div class="history-subtitle">{{ qr.message or 'No owner note provided.' }}</div>
+        </article>
+        <article class="history-item">
+            <div class="history-meta"><span>Access token</span><span>{{ qr.chat_token }}</span></div>
+            <div class="history-title-strong">Status</div>
+            <div class="history-subtitle">{{ 'Blocked' if qr.is_blocked else 'Active' }}</div>
+            <div class="history-subtitle">QR stored at <code>{{ qr.qr_image_path }}</code></div>
+        </article>
+        <article class="history-item">
+            <div class="history-meta"><span>Preview</span><span>QR image</span></div>
+            <div class="history-title-strong">QR Code Snapshot</div>
+            <div class="preview-thumb" style="margin-top:16px;">
+                <img src="{{ url_for('static', filename=qr.qr_image_path) }}" alt="QR code preview">
+            </div>
+        </article>
+    </div>
+</section>
+
+<section class="history-panel">
+    <div class="history-header">
+        <div>
+            <div class="history-title">Stored chat history</div>
+            <div class="history-note">All messages and uploads saved for this QR code.</div>
+        </div>
+    </div>
+    <div class="history-list">
+        {% if messages %}
+            {% for msg in messages %}
+                <article class="history-item">
+                    <div class="history-meta"><span>{{ msg.timestamp }}</span><span>{{ msg.sender_name }} • {{ msg.sender_type|capitalize }}</span></div>
+                    {% if msg.message %}
+                        <div class="history-title-strong">{{ msg.message }}</div>
+                    {% endif %}
+                    {% if msg.image_path %}
+                        <img src="{{ url_for('static', filename=msg.image_path) }}" alt="Chat attachment" style="width:100%; max-width:420px; margin-top:14px; border-radius:18px;" />
+                    {% endif %}
+                </article>
+            {% endfor %}
+        {% else %}
+            <article class="history-item">
+                <div class="history-title-strong">No conversations yet</div>
+                <div class="history-subtitle">This QR is ready for guest visits. Once someone connects, the full chat log will appear here.</div>
+            </article>
+        {% endif %}
+    </div>
+</section>
+
+<section class="history-panel">
+    <div class="history-header">
+        <div>
+            <div class="history-title">Visitor sessions</div>
+            <div class="history-note">Reason selections are retained for reporting and review.</div>
+        </div>
+    </div>
+    <div class="history-list">
+        {% if visitor_sessions %}
+            {% for visitor in visitor_sessions %}
+                <article class="history-item">
+                    <div class="history-meta"><span>{{ visitor.created_at }}</span><span>{{ visitor.visitor_name }}</span></div>
+                    <div class="history-title-strong">Reason</div>
+                    <div class="history-subtitle">{{ visitor.reason or 'Not selected' }}</div>
+                    <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap;">
+                        <a href="{{ url_for('owner_chat_session', vehicle_token=qr.chat_token, visitor_session_id=visitor.id) }}" class="btn btn-secondary"><i class="fas fa-comments"></i> Open Session</a>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <article class="history-item">
+                <div class="history-title-strong">No visitor sessions recorded</div>
+                <div class="history-subtitle">The first visitor session will appear here after someone scans the QR and starts a chat.</div>
+            </article>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

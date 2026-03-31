@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Active Chats - SwiftConnect{% endblock %}
+
+{% block content %}
+<section class="hero-panel">
+    <div class="hero-tag">Chat Control</div>
+    <h1 class="hero-title">Active Vehicle Chats</h1>
+    <p class="hero-copy">Review your active vehicle conversations and open the private chat room for each connected profile.</p>
+</section>
+
+<section class="history-panel">
+    <div class="history-header">
+        <div>
+            <div class="history-title">Your live chats</div>
+            <div class="history-note">Chat rooms created by QR scans are stored safely and remain available for future conversations.</div>
+        </div>
+    </div>
+    <div class="history-list">
+        {% if chats %}
+            {% for chat in chats %}
+                <article class="history-item">
+                    <div class="history-meta"><span>{{ chat.last_message_at }}</span><span>{{ chat.vehicle }}</span></div>
+                    <div class="history-title-strong">Visitor {{ chat.visitor_name }}</div>
+                    <div class="history-subtitle">Reason: {{ chat.visitor_reason or 'Not selected' }}</div>
+                    <div class="history-subtitle">{{ chat.last_message }}</div>
+                    <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+                        <a href="{{ url_for('owner_chat_session', vehicle_token=chat.chat_token, visitor_session_id=chat.visitor_session_id) }}" class="btn btn-primary"><i class="fas fa-comments"></i> Open Visitor Thread</a>
+                    </div>
+                </article>
+            {% endfor %}
+        {% else %}
+            <article class="history-item">
+                <div class="history-title-strong">No active conversations yet</div>
+                <div class="history-subtitle">Chats will appear when a visitor contacts you. Generate a QR code and let your vehicle receive anonymous messages safely.</div>
+            </article>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
