@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Active Chats - SwiftConnect{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <h1 class="hero-title" style="font-size: 2rem; margin-bottom: 8px;">Active Visitor Chats</h1>
+    <p class="chat-subtitle">Manage open conversations with current visitors.</p>
+</div>
+
+<div class="flat-card">
+    <div class="card-header border-b pb-4 mb-4" style="border-bottom: 1px solid var(--border-color)">
+        <h2 class="card-title"><i data-lucide="messages-square" style="vertical-align: middle; margin-right: 8px;"></i>Live Sessions</h2>
+    </div>
+    
+    {% if chats %}
+        <div class="grid-2">
+            {% for chat in chats %}
+                <a href="{{ url_for('owner_chat_session', vehicle_token=chat.chat_token, visitor_session_id=chat.visitor_session_id) }}" class="flat-card" style="display: block; text-decoration: none; cursor: pointer;">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="btn-icon" style="background-color: #E2E8F0; color: #475569; width: 40px; height: 40px;">
+                            <i data-lucide="car"></i>
+                        </div>
+                        <span class="status-dot status-active"></span>
+                    </div>
+                    <div class="card-title">{{ chat.vehicle }}</div>
+                    <div class="card-subtitle mb-4">
+                        <span style="font-weight: 500; color: var(--text-main);">{{ chat.visitor_name }}</span> 
+                        {% if chat.visitor_reason %}
+                            &bull; {{ chat.visitor_reason }}
+                        {% endif %}
+                    </div>
+                    <div style="font-size: 0.9rem; color: var(--text-muted); background: var(--bg-color); padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ chat.last_message }}
+                    </div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: 8px;">{{ chat.last_message_at.split(' ')[1][:5] if ' ' in chat.last_message_at else chat.last_message_at }}</div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="flex items-center justify-center flex-1" style="flex-direction: column; padding: 48px 0; color: var(--text-muted);">
+            <i data-lucide="message-square-off" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+            <h3 style="font-weight: 500; margin-bottom: 4px; color: var(--text-main)">No active conversations</h3>
+            <p>Scanning your QR code will open a new chat session.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
